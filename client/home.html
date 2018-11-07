@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.js"
+    integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+    crossorigin="anonymous"></script>
+    <title>Todo</title>
+</head>
+<body>
+    <nav class="navbar navbar-dark fixed-top bg-dark">
+        <a class="judul navbar-brand" href="#">
+            <img src="./002-check.png" width="30" height="30" class="d-inline-block" >
+            ToDo
+        </a>
+        <a id="logout" onclick="toLogout()" href="">logout</a>
+    </nav>
+    <div class="menu row">
+        <div class="isi col-sm-3">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                    <th scope="col">menu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td id="showlist"><strong><a href=""> show all </a></strong></td>
+                    </tr>
+                    <tr>
+                        <td id="add"><strong><a href=""> add new </a></strong></td>
+                    </tr>
+                    <tr>
+                        <td id="done"><strong><a href=""> done </a></strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>              
+        <div class="list col-md-7">
+
+        </div>
+        
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        $("#showlist").click(function(data){
+            data.preventDefault()
+            $.ajax({
+                method: "GET",
+                url: "http://localhost:3000/task/show"
+            })
+            .done((response)=>{
+                $(".list").empty()
+                for(let i = 0;i < response.length;i++){
+                    $(".list").append(`
+                    <div class="list-group">
+                        <a href="" class="list-group-item list-group-item-action flex-column align-items-start shadow-lg">
+                        <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">${response[i].name}</h5>
+                        <small>${response[i].due_date}</small>
+                        </div>
+                        <p class="mb-1">${response[i].description}</p>
+                        <small>${response[i].status}</small>
+                        </a>
+                    </div>
+                    `)
+                }
+            })
+        })
+        $("#add").click(function(data){
+            data.preventDefault()
+            $(".list").empty()
+            $(".list").append(`
+            <form class="addTodo">
+                <div class="form-row">
+                    <div class="form-group col-md-6 text-light">
+                    <label for="inputName">Name</label>
+                    <input type="text" class="form-control" id="inputName" placeholder="Add your todo name">
+                    </div>
+                </div>
+                <div class="form-group text-light">
+                    <label for="inputDescription">Description</label>
+                    <input type="text" class="form-control" id="inputDescription" placeholder="add your description here...">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6 text-light">
+                    <label for="inputDate">Due Date</label>
+                    <input type="date" id="inputDate" class="form-control">
+                    </div>
+                    <div class="form-group col-md-4">
+                    </div>
+                </div>
+                <button type="submit" class="send btn btn-primary">Add</button>
+            </form>
+            `)
+            $(".send").click(function(data){
+                let name = $('#inputName').val()
+                let description = $("#inputDescription").val()
+                let due_date = $("#inputDate").val()
+                $.ajax({
+                    method: "POST", 
+                    url: "http://localhost:3000/task/create",
+                    data: {
+                            name:name,
+                            description:description,
+                            due_date:due_date,
+                            status: "false"
+                    }
+                })
+            })
+        })
+        $('.logout').click(function(data){
+            localStorage.removeItem('tokenJwt')
+        })
+        $(document).ready( function(){
+            checkLogin() 
+        })
+                function checkLogin(){
+                    let token = localStorage.getItem("token")
+                    if(!token){
+                        window.location = '/login.html'
+                    }
+                } 
+                function toLogout(){
+                    localStorage.removeItem('token')
+                    window.location = '/'
+                }
+    </script>
+</body>
+</html>

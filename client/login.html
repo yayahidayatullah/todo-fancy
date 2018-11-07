@@ -1,0 +1,118 @@
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login Page</title>
+   <!--Made with love by Mutiullah Samim -->
+   
+	<!--Bootsrap 4 CDN-->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    
+    <!--Fontawesome CDN-->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+	<!--Custom styles-->
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="757900785184-9nhtbc318pe29ncr499l9turgk0mm3k9.apps.googleusercontent.com">
+
+</head>
+<body>
+    <nav class="navbar navbar-dark fixed-top bg-dark">
+        <a class="judul navbar-brand" href="#">
+            <img src="./002-check.png" width="30" height="30" class="d-inline-block" >
+            ToDo
+        </a>
+    </nav>
+    <div class="container">
+        <div class="d-flex justify-content-center h-100">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Sign In</h3>
+                    <div class="d-flex justify-content-end social_icon">
+                        <span><i class=" fab fa-google-plus-square"></i></span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="login">
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" class="username form-control" placeholder="username">
+                            
+                        </div>
+                        <div class="input-group form-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" class="password form-control" placeholder="password">
+                        </div>
+                        <div class="row align-items-center remember">
+                            <input type="checkbox">Remember Me
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Login" class="login btn float-right login_btn">
+                        </div>
+                        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                        <a href="#" onclick="signOut();">Sign out</a>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-center links">
+                        Don't have an account?<a href="register.html">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+        });
+    }
+    </script>
+    <script>
+        // function onSignIn(googleUser) {
+        //     var id_token = googleUser.getAuthResponse().id_token;
+        //     $.ajax({
+        //         method: "POST",
+        //         url: "http://localhost:3000/signin",
+        //         data: {
+        //             token:id_token
+        //         }
+        //     })
+        //     .done(function(response){
+        //         console.log(response)
+        //     })
+        // }
+
+        $("#login").submit(function(e){
+            e.preventDefault()
+            let username = $(".username").val()
+            let password = $(".password").val()
+            console.log('asdasds')
+            $.ajax({
+                method: "POST", 
+                url: "http://localhost:3000/user/login",
+                data: {
+                        username: username,
+                        password: password
+                }
+            })
+            .done(function(response){
+                console.log(response)
+                localStorage.setItem('token', response.tokenJwt)
+                window.location = '/home.html'
+            })
+        })
+
+    </script>
+</body>
+</html>
